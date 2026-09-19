@@ -10,8 +10,9 @@ except ImportError:
 from datetime import datetime, timezone
 
 ROOT=Path(__file__).resolve().parent
+DATA=ROOT/'data'
 FONT_DIR=ROOT/'assets'/'fonts'
-PROJECTS=ROOT/'data'/'projects'; QUEUE=ROOT/'data'/'queue'; MEDIA=ROOT/'media'; WORK=ROOT/'data'/'work'; SOURCES=ROOT/'data'/'sources'; CANCELLED=ROOT/'data'/'cancelled'
+PROJECTS=DATA/'projects'; QUEUE=DATA/'queue'; MEDIA=ROOT/'media'; WORK=DATA/'work'; SOURCES=DATA/'sources'; CANCELLED=DATA/'cancelled'
 for d in (PROJECTS,QUEUE,MEDIA,WORK,SOURCES,CANCELLED): d.mkdir(parents=True,exist_ok=True)
 MODEL_NAME=os.getenv('WHISPER_MODEL','small'); COMPUTE=os.getenv('COMPUTE_TYPE','int8')
 OUTPUT_WIDTH=int(os.getenv('OUTPUT_WIDTH','720')); OUTPUT_HEIGHT=int(OUTPUT_WIDTH*16/9)
