@@ -34,15 +34,26 @@ const workerOnline=()=>{try{const w=JSON.parse(fs.readFileSync(path.join(DATA,'w
 
 // Permanent Worker Supervisor
 let workerProc=null;
+const PYTHON_CMD=process.env.PYTHON_BIN||(process.platform==='win32'?'python':'python3');
 function startWorker(){
   if(workerProc) return;
-  console.log('[Worker Supervisor] Starting persistent Python worker...');
-  workerProc=spawn('python',['worker.py'],{cwd:ROOT,stdio:'inherit'});
-  workerProc.on('exit',(code)=>{
-    console.log(`[Worker Supervisor] Worker exited (code ${code}). Auto-restarting in 2s...`);
+  console.log(`[Worker Supervisor] Starting persistent worker using ${PYTHON_CMD}...`);
+  try {
+    workerProc=spawn(PYTHON_CMD,['worker.py'],{cwd:ROOT,stdio:'inherit'});
+    workerProc.on('error',(err)=>{
+      console.error('[Worker Supervisor] Process error:',err.message);
+      workerProc=null;
+      setTimeout(ensureWorker,3000);
+    });
+    workerProc.on('exit',(code)=>{
+      console.log(`[Worker Supervisor] Worker exited (code ${code}). Auto-restarting in 2s...`);
+      workerProc=null;
+      setTimeout(ensureWorker,2000);
+    });
+  } catch(e) {
+    console.error('[Worker Supervisor] Failed to start:',e);
     workerProc=null;
-    setTimeout(ensureWorker,2000);
-  });
+  }
 }
 function ensureWorker(){
   if(!workerProc && !workerOnline()){
