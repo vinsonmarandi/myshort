@@ -213,7 +213,11 @@ def process(job):
                         mb=downloaded/1_048_576; total_mb=total/1_048_576
                         speed_mb=speed/1_048_576 if speed else 0
                         update(p,progress=mapped,stage=0,stageLabel=f'Downloading source ({dl_pct:.0f}% of {total_mb:.0f} MB • {speed_mb:.1f} MB/s)')
-        opts={'format':'bestvideo[vcodec^=avc1][height<=720]+bestaudio/bestvideo[height<=720]+bestaudio/best[height<=720]','outtmpl':str(source),'merge_output_format':'mp4','ffmpeg_location':FFMPEG,'noplaylist':True,'quiet':True,'no_warnings':True,'retries':10,'fragment_retries':10,'js_runtimes':{'node':{}} if shutil.which('node') else {},'progress_hooks':[dl_progress]}
+        opts={'format':'bestvideo[vcodec^=avc1][height<=720]+bestaudio/bestvideo[height<=720]+bestaudio/best[height<=720]/best[height<=720]/best','outtmpl':str(source),'merge_output_format':'mp4','ffmpeg_location':FFMPEG,'noplaylist':True,'quiet':True,'no_warnings':True,'retries':10,'fragment_retries':10,'js_runtimes':{'node':{}} if shutil.which('node') else {},'progress_hooks':[dl_progress]}
+        raw_cookie_text=os.getenv('YTDLP_COOKIES_TEXT','').strip()
+        if raw_cookie_text:
+            try: (DATA/'cookies.txt').write_text(raw_cookie_text,encoding='utf-8')
+            except Exception: pass
         cookie_candidates=[os.getenv('YTDLP_COOKIES_FILE','').strip(),str(ROOT/'cookies.txt'),str(ROOT/'youtube-cookies.txt'),str(ROOT/'youtube.com_cookies.txt'),str(DATA/'cookies.txt')]
         cookie_file=next((c for c in cookie_candidates if c and os.path.isfile(c)),None)
         if cookie_file: opts['cookiefile']=cookie_file
@@ -226,7 +230,25 @@ def process(job):
             info={'id':p.get('youtubeVideoId'),'title':p.get('sourceTitle','YouTube video')}
         else:
             from yt_dlp import YoutubeDL
-            with YoutubeDL(opts) as ydl: info=ydl.extract_info(p['youtubeUrl'],download=not source.exists())
+            client_strategies=[['android','ios','web_embedded'],['ios'],['android'],['mweb','web_embedded'],['web']]
+            info=None
+            last_err=None
+            for client_list in client_strategies:
+                try:
+                    c_opts=dict(opts)
+                    c_opts.setdefault('extractor_args',{})['youtube']={'player_client':client_list}
+                    with YoutubeDL(c_opts) as ydl:
+                        info=ydl.extract_info(p['youtubeUrl'],download=not source.exists())
+                        if info: break
+                except Exception as ex:
+                    last_err=ex
+                    err_s=str(ex).lower()
+                    if any(x in err_s for x in ['bot','sign in','confirm you','login']):
+                        print(f'Client {client_list} hit verification check, trying fallback...',flush=True)
+                        continue
+                    break
+            if not info and last_err:
+                raise last_err
         candidates=list(wd.glob('source.*'))
         if not candidates: raise RuntimeError('The video source could not be downloaded.')
         source=candidates[0]; duration=probe(source)
