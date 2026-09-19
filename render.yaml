@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: myshort-backend
+    runtime: docker
+    dockerfilePath: ./shortify/Dockerfile
+    dockerContext: ./shortify
+    plan: free
+    region: singapore
+    envVars:
+      - key: WHISPER_MODEL
+        value: tiny
+      - key: COMPUTE_TYPE
+        value: int8
+    healthCheckPath: /api/health

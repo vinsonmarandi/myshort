@@ -1,0 +1,11 @@
+node_modules/
+dist/
+media/
+data/
+uploads/
+*.log
+__pycache__/
+*.pyc
+.env
+.env.local
+.vercel

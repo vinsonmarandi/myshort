@@ -1,0 +1,25 @@
+services:
+  web:
+    build: .
+    command: npm start
+    ports:
+      - "5173:5173"
+    volumes:
+      - shortify_data:/app/data
+      - shortify_media:/app/media
+    restart: unless-stopped
+  worker:
+    build: .
+    command: python3 worker.py
+    environment:
+      WHISPER_MODEL: ${WHISPER_MODEL:-small}
+      COMPUTE_TYPE: ${COMPUTE_TYPE:-int8}
+      YTDLP_COOKIES_FILE: ${YTDLP_COOKIES_FILE:-}
+    volumes:
+      - shortify_data:/app/data
+      - shortify_media:/app/media
+      - ./secrets:/app/secrets:ro
+    restart: unless-stopped
+volumes:
+  shortify_data:
+  shortify_media:
