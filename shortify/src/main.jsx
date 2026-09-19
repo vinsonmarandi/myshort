@@ -12,7 +12,8 @@ import './history.css';
 import './download.css';
 import './mobile.css';
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '');
+const defaultBase = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? '' : 'https://myshort-backend.onrender.com';
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || defaultBase).trim().replace(/\/+$/, '');
 const apiUrl = path => `${API_BASE}${path.startsWith('/') ? path : `/${path}`}`;
 
 const clips=[];
