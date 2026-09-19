@@ -67,9 +67,67 @@ function Settings({url,onGenerate,onBack}){const [count,setCount]=useState(5),[l
 function Setting({label,hint,children}){return <div className="setting"><label>{label}</label>{hint&&<small>{hint}</small>}{children}</div>}
 function Segment({options,value,set,suffix=''}){return <div className="segment">{options.map(x=><button key={x} onClick={()=>set(x)} className={value===x?'active':''}>{x}{suffix}</button>)}</div>}
 
+function CookieModal({onClose, onSaved}){
+  const [text, setText] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  const save = async () => {
+    if (!text.trim()) { setError('Please paste your cookie text.'); return; }
+    setSaving(true); setError('');
+    try {
+      const r = await fetch(apiUrl('/api/cookies'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cookies: text })
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || 'Failed to save cookies');
+      onSaved();
+    } catch(e) {
+      setError(e.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="confirmOverlay" role="dialog" aria-modal="true" style={{zIndex:9999}}>
+      <div className="confirmDialog" style={{maxWidth: 520, textAlign: 'left', padding: '24px'}}>
+        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom: 12}}>
+          <h2 style={{margin:0, fontSize:'1.25rem', display:'flex', alignItems:'center', gap: 8}}>🍪 Add YouTube Cookies</h2>
+          <button onClick={onClose} style={{background:'none', border:'none', cursor:'pointer', padding: 4}}><X size={18}/></button>
+        </div>
+        <p style={{fontSize:'0.88rem', color:'#666', lineHeight: 1.5, margin:'0 0 12px'}}>
+          YouTube blocks cloud servers from downloading certain popular videos without verification. Adding cookies allows your cloud worker to process any video:
+        </p>
+        <ol style={{fontSize:'0.82rem', color:'#555', paddingLeft: 18, margin:'0 0 14px', lineHeight: 1.6}}>
+          <li>Install extension <b>Get cookies.txt LOCALLY</b> in Chrome/Edge.</li>
+          <li>Open <a href="https://www.youtube.com" target="_blank" rel="noreferrer" style={{color:'#4361ee', textDecoration:'underline'}}>youtube.com</a> while signed in.</li>
+          <li>Click the extension icon, copy the text, and paste it below:</li>
+        </ol>
+        <textarea
+          rows={5}
+          placeholder="# Netscape HTTP Cookie File&#10;.youtube.com TRUE / TRUE ..."
+          value={text}
+          onChange={e => setText(e.target.value)}
+          style={{width:'100%', boxSizing:'border-box', padding: 10, fontSize:'0.75rem', fontFamily:'monospace', borderRadius: 8, border:'1px solid #ccc', resize:'vertical', marginBottom: 10}}
+        />
+        {error && <div style={{color:'#e63946', fontSize:'0.82rem', marginBottom: 10}}>{error}</div>}
+        <div style={{display:'flex', gap: 8, justifyContent:'flex-end'}}>
+          <button className="cancelClear" onClick={onClose} disabled={saving}>Cancel</button>
+          <button className="blackBtn" onClick={save} disabled={saving} style={{background:'#4361ee'}}>
+            {saving ? <LoaderCircle className="spin" size={15}/> : <Check size={15}/>} {saving ? 'Saving...' : 'Save & Retry'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const stages=['Loading video','Transcribing audio','Finding the best moments','Creating vertical clips','Adding captions','Preparing downloads'];
 function Processing({projectId,onDone,onBack}){
-  const [step,setStep]=useState(0),[pct,setPct]=useState(0),[label,setLabel]=useState('Waiting for a worker'),[failure,setFailure]=useState('');
+  const [step,setStep]=useState(0),[pct,setPct]=useState(0),[label,setLabel]=useState('Waiting for a worker'),[failure,setFailure]=useState(''),[showCookieModal,setShowCookieModal]=useState(false);
   useEffect(()=>{
     let active=true;
     const poll=async()=>{
@@ -96,7 +154,25 @@ function Processing({projectId,onDone,onBack}){
     try{await fetch(apiUrl(`/api/projects/${projectId}`),{method:'DELETE'})}catch{}
     onBack();
   };
-  if(failure)return <main className="processing failedState"><div className="failureIcon"><X/></div><span className="kicker">PROCESSING STOPPED</span><h1>We couldn't finish this video.</h1><p>{failure}</p><button className="blackBtn" onClick={onBack}>Try another video <ArrowRight size={16}/></button><small className="safeClose">No generated media was published. Temporary worker files can be safely removed.</small></main>;
+  if(failure){
+    const isBotBlock = failure.toLowerCase().includes('bot') || failure.toLowerCase().includes('cookies');
+    return <main className="processing failedState">
+      <div className="failureIcon"><X/></div>
+      <span className="kicker">PROCESSING STOPPED</span>
+      <h1>We couldn't finish this video.</h1>
+      <p>{failure}</p>
+      <div style={{display:'flex', gap:10, justifyContent:'center', flexWrap:'wrap', marginTop: 16}}>
+        {isBotBlock && (
+          <button className="blackBtn" style={{background:'#4361ee'}} onClick={()=>setShowCookieModal(true)}>
+            🍪 Add YouTube Cookies & Retry
+          </button>
+        )}
+        <button className="outlineBtn" onClick={onBack}>Try another video <ArrowRight size={16}/></button>
+      </div>
+      <small className="safeClose">No generated media was published. Temporary worker files can be safely removed.</small>
+      {showCookieModal && <CookieModal onClose={()=>setShowCookieModal(false)} onSaved={()=>{setShowCookieModal(false); window.location.reload();}}/>}
+    </main>;
+  }
   return <main className="processing">
     <div className="processingVisual"><div className="rings"><div className="pFrame realWorkerFrame"><LoaderCircle className="spin"/></div></div><div className="progressBubble">{pct}%</div></div>
     <span className="kicker">REAL WORKER ACTIVE</span>

@@ -74,6 +74,20 @@ app.post('/api/clips/:id/render',(req,res)=>res.status(501).json({error:'Edited 
 app.get('/api/projects/:id/download-all',(req,res)=>{const p=readProject(req.params.id);if(!p||p.status!=='completed')return res.status(404).json({error:'Completed project not found.'});res.attachment(`${p.id}-shorts.zip`);const zip=archive('zip',{zlib:{level:6}});zip.on('error',e=>res.destroy(e));zip.pipe(res);for(const c of p.clips){const file=path.join(MEDIA,p.id,path.basename(c.videoUrl.split('?')[0]));if(fs.existsSync(file))zip.file(file,{name:`short-${c.number}.mp4`})}zip.finalize()});
 app.delete('/api/projects/:id',(req,res)=>{const file=projectPath(req.params.id);if(!fs.existsSync(file))return res.status(404).json({error:'Project not found.'});fs.writeFileSync(path.join(CANCELLED,req.params.id),new Date().toISOString());fs.rmSync(file,{force:true});fs.rmSync(path.join(QUEUE,`${req.params.id}.json`),{force:true});fs.rmSync(path.join(MEDIA,req.params.id),{recursive:true,force:true});for(const ext of ['.mp4','.transcript.json'])fs.rmSync(path.join(DATA,'sources',`${req.params.id}${ext}`),{force:true});res.status(204).end()});
 
+app.get('/api/cookies',(_,res)=>{
+  const p=path.join(DATA,'cookies.txt');
+  const configured=fs.existsSync(p)&&fs.statSync(p).size>10;
+  res.json({configured});
+});
+app.post('/api/cookies',(req,res)=>{
+  const {cookies}=req.body||{};
+  if(!cookies||typeof cookies!=='string'||cookies.trim().length<10){
+    return res.status(400).json({error:'Please paste valid cookie text.'});
+  }
+  fs.writeFileSync(path.join(DATA,'cookies.txt'),cookies.trim(),'utf8');
+  res.json({ok:true,configured:true});
+});
+
 app.use(express.static(path.join(ROOT,'dist')));
 app.use((req,res)=>res.sendFile(path.join(ROOT,'dist','index.html')));
 app.listen(PORT,'0.0.0.0',()=>console.log(`MyShort running on http://0.0.0.0:${PORT}`));
