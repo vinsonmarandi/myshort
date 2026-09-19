@@ -56,6 +56,9 @@
 .policyContent section{margin-bottom:18px}
 .policyContent h3{font-size:13px;font-weight:700;margin:0 0 6px;color:#222}
 .policyContent p{font-size:12px;line-height:1.65;color:#444;margin:0}
+.policyContent ul{margin:8px 0 14px 20px;padding:0;font-size:12px;line-height:1.65;color:#444}
+.policyContent li{margin-bottom:6px}
+.policyContent a{color:#4361ee;text-decoration:underline}
 .policyFooter{padding:16px 24px;border-top:1px solid #eeeae0;background:#ffffff;display:flex;justify-content:flex-end}
 .footerLinkBtn{background:transparent;border:0;color:inherit;font-size:inherit;cursor:pointer;text-decoration:underline;padding:0 4px}
 .footerLinkBtn:hover{color:#111111}

@@ -225,7 +225,8 @@ def process(job):
             import urllib.request
             urllib.request.urlopen('http://127.0.0.1:4416/ping',timeout=1)
             opts.setdefault('extractor_args',{})['youtubepot-bgutilhttp']={'base_url':['http://127.0.0.1:4416']}
-        except Exception: pass
+        except Exception:
+            opts.setdefault('extractor_args',{})['youtubepot-bgutilscript']={'server_home':[str(DATA/'disabled_pot')]}
         if retained.exists() and transcript_archive.exists():
             info={'id':p.get('youtubeVideoId'),'title':p.get('sourceTitle','YouTube video')}
         else:
