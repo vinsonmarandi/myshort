@@ -1,0 +1,321 @@
+/* ==========================================================================
+   MYSHORT STUDIO THEME SYSTEM (Dark / Light Glassmorphism)
+   ========================================================================== */
+
+:root, [data-theme="dark"] {
+  --bg-page: #090a10;
+  --bg-nav: rgba(13, 15, 24, 0.85);
+  --bg-card: rgba(18, 22, 36, 0.75);
+  --bg-card-elevated: #161b2c;
+  --bg-input: rgba(11, 14, 23, 0.85);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-focus: #8b5cf6;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent-primary: #8b5cf6;
+  --accent-secondary: #06b6d4;
+  --accent-gradient: linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #3b82f6 100%);
+  --accent-glow: 0 0 20px rgba(139, 92, 246, 0.35);
+  --btn-black: #ffffff;
+  --btn-black-text: #090a10;
+  --btn-black-hover: #e2e8f0;
+  --pill-bg: rgba(255, 255, 255, 0.06);
+  --modal-backdrop: rgba(0, 0, 0, 0.82);
+  --shadow-card: 0 16px 36px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.07);
+}
+
+[data-theme="light"] {
+  --bg-page: #f8fafc;
+  --bg-nav: rgba(255, 255, 255, 0.9);
+  --bg-card: #ffffff;
+  --bg-card-elevated: #f1f5f9;
+  --bg-input: #ffffff;
+  --border-color: rgba(0, 0, 0, 0.09);
+  --border-focus: #6366f1;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --accent-primary: #6366f1;
+  --accent-secondary: #0284c7;
+  --accent-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  --accent-glow: 0 0 20px rgba(99, 102, 241, 0.2);
+  --btn-black: #0f172a;
+  --btn-black-text: #ffffff;
+  --btn-black-hover: #1e293b;
+  --pill-bg: rgba(0, 0, 0, 0.05);
+  --modal-backdrop: rgba(15, 23, 42, 0.6);
+  --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+body {
+  background-color: var(--bg-page) !important;
+  color: var(--text-primary) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background: var(--bg-nav) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+header a, header button.textBtn {
+  color: var(--text-secondary) !important;
+}
+header a:hover, header button.textBtn:hover, header button.navActive {
+  color: var(--text-primary) !important;
+}
+
+.logo {
+  color: var(--text-primary) !important;
+}
+.logoMark {
+  background: var(--accent-gradient) !important;
+  color: #ffffff !important;
+  box-shadow: var(--accent-glow) !important;
+}
+
+.blackBtn {
+  background: var(--btn-black) !important;
+  color: var(--btn-black-text) !important;
+  border: none !important;
+  font-weight: 600 !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.blackBtn:hover {
+  background: var(--btn-black-hover) !important;
+  transform: translateY(-1px);
+}
+
+.outlineBtn {
+  background: var(--pill-bg) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color) !important;
+}
+.outlineBtn:hover {
+  border-color: var(--text-secondary) !important;
+}
+
+.urlWrap .urlBox {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-card) !important;
+  backdrop-filter: blur(12px) !important;
+}
+.urlWrap .urlBox input {
+  color: var(--text-primary) !important;
+}
+.urlWrap .urlBox input::placeholder {
+  color: var(--text-muted) !important;
+}
+
+.settingsCard, .stageCard, .projectsTable, .emptyProjects, .videoSummary {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-card) !important;
+  color: var(--text-primary) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.setting label {
+  color: var(--text-secondary) !important;
+}
+.setting small {
+  color: var(--text-muted) !important;
+}
+
+.segment {
+  background: var(--bg-input) !important;
+  border: 1px solid var(--border-color) !important;
+}
+.segment button {
+  color: var(--text-secondary) !important;
+}
+.segment button.active {
+  background: var(--accent-gradient) !important;
+  color: #ffffff !important;
+  box-shadow: var(--accent-glow) !important;
+}
+
+.unlimitedPicker label {
+  background: var(--bg-input) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+}
+.unlimitedPicker input {
+  color: var(--text-primary) !important;
+}
+
+.selectLike {
+  background: var(--bg-input) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+.selectLike select {
+  background: transparent !important;
+  color: var(--text-primary) !important;
+}
+.selectLike select option {
+  background: var(--bg-card-elevated) !important;
+  color: var(--text-primary) !important;
+}
+
+.toggle {
+  background: rgba(120, 120, 128, 0.25) !important;
+}
+.toggle.on {
+  background: var(--accent-primary) !important;
+}
+
+.themeToggleBtn, .headerIconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: var(--pill-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.themeToggleBtn:hover, .headerIconBtn:hover {
+  color: var(--text-primary);
+  border-color: var(--border-focus);
+}
+
+.aspectGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 8px;
+}
+.aspectOption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+.aspectOption:hover {
+  border-color: var(--border-focus);
+  color: var(--text-primary);
+}
+.aspectOption.active {
+  border-color: var(--accent-primary);
+  background: rgba(139, 92, 246, 0.12);
+  color: var(--text-primary);
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+}
+.aspectBox {
+  border: 2px solid currentColor;
+  border-radius: 4px;
+  display: block;
+}
+.aspect916 { width: 14px; height: 24px; }
+.aspect11 { width: 18px; height: 18px; }
+.aspect169 { width: 24px; height: 14px; }
+
+.subStyleGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 8px;
+}
+.subStyleCard {
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+.subStyleCard:hover {
+  border-color: var(--border-focus);
+}
+.subStyleCard.active {
+  border-color: var(--accent-primary);
+  background: rgba(139, 92, 246, 0.12);
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+}
+.subStylePreview {
+  font-weight: 800;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+.subStyleCard small {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.viralityBanner {
+  display: flex;
+  gap: 12px;
+  background: rgba(139, 92, 246, 0.08);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 14px 0;
+}
+.viralityMetric {
+  flex: 1;
+  text-align: center;
+}
+.viralityMetric b {
+  display: block;
+  font-size: 1.15rem;
+  color: #34d399;
+}
+.viralityMetric span {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.socialPostBox {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-top: 10px;
+  max-height: 120px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.modalWindow {
+  background: var(--bg-card-elevated) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8) !important;
+  color: var(--text-primary) !important;
+}
+.modalScriptBox {
+  background: var(--bg-input) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+footer {
+  background: var(--bg-page) !important;
+  border-top: 1px solid var(--border-color) !important;
+  color: var(--text-muted) !important;
+}
